@@ -54,6 +54,24 @@ export function setUserInfo(user) {
 }
 
 /**
+ * 设置购物车信息
+ * @param user
+ * @returns {*}
+ */
+export function setShopCarInfo(cars) {
+  Storage.set(Config.shopCarKey, cars);
+  return cars;
+}
+
+/**
+ * 获取购物车信息
+ * 
+ */
+export function getShopCarInfo() {
+  return Storage.get(Config.shopCarKey) || [];
+}
+
+/**
  * 设置权限
  * @param permissionsArr
  * @returns {*}

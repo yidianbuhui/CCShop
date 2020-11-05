@@ -1,59 +1,49 @@
 <template>
-  <div>
-    <div class="login">
-      <div id="particlesLogin"></div>
-      <el-form
-        class="card-box"
-        ref="loginForm"
-        :rules="rules"
-        :model="loginForm"
-      >
-        <el-form-item prop="name"
-          ><span class="loginText">用户名登陆</span></el-form-item
+  <div
+    id="login"
+    class="login"
+    style="width: 100vw;height: 100vh;display: flex;justify-content: center;align-items: center"
+  >
+    <el-form
+      ref="loginForm"
+      :rules="rules"
+      :model="loginForm"
+      label-width="80px"
+    >
+      <el-form-item label="用户名" prop="name">
+        <el-input v-model="loginForm.name"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="pass">
+        <el-input v-model="loginForm.pass" show-password></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="clickLogin('loginForm')"
+          >登录</el-button
         >
-        <el-form-item>
-          <i class="user" aria-hidden="true"></i>
-          <input
-            type="text"
-            class="loginInput"
-            placeholder="请输入用户名"
-            v-model="loginForm.name"
-          />
-        </el-form-item>
-        <el-form-item prop="pass">
-          <i class="password" aria-hidden="true" style="font-size: 20px"></i>
-          <input
-            type="password"
-            class="loginInput"
-            placeholder="请输入密码"
-            v-model="loginForm.pass"
-            show-password
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            class="loginButton"
-            type="primary"
-            @click="clickLogin('loginForm')"
-            >登录</el-button
-          >
-          <!-- <el-button class="resetButton" @click="resetForm('loginForm')">重置</el-button> -->
-        </el-form-item>
-        <a
-          ><span style="font-size: 13px" class="loginText"
-            >请仔细填写用户名和密码哦！</span
-          ></a
+        <el-button @click="resetForm('loginForm')" style="margin-left:120px"
+          >重置</el-button
         >
-      </el-form>
-    </div>
+        <el-row>
+          <el-col :span="12">
+            <el-link type="primary">注册</el-link>
+          </el-col>
+          <el-col :span="12" style="text-align:right">
+            <el-link type="primary">忘记密码</el-link>
+          </el-col>
+        </el-row>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 <script>
-import { setToken, setUserInfo } from "@/utils/common";
+import { mapActions } from "vuex";
+import { setToken } from "@/utils/common";
 import { login } from "@/api/user/login";
 export default {
+  name: "login",
   data() {
     return {
+      activeName: "second",
       loginForm: {
         name: "",
         pass: ""
@@ -65,6 +55,10 @@ export default {
     };
   },
   methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+
     clickLogin(loginForm) {
       this.$refs[loginForm].validate(valid => {
         if (valid) {
@@ -73,10 +67,9 @@ export default {
             password: this.loginForm.pass
           })
             .then(r => {
-              console.log(r);
-              if (r.code == 200) {
-                setUserInfo(r.data.user);
-                setToken(r.data.token);
+              // console.log(r);
+              if (r != null) {
+                setToken("HJDF844GDFG5D8J7FGHFG5");
                 this.$router.push("/");
               } else {
                 this.$alert("用户名或密码错误", "提示", {
@@ -94,56 +87,44 @@ export default {
     resetForm(loginForm) {
       this.$refs[loginForm].resetFields();
     }
-  }
+  },
+  mounted: function() {}
 };
 </script>
+
 <style>
-.loginText {
-  color: #7d7e7f;
-}
-.loginButton {
-  width: 250px;
-  border-radius: 15px;
-}
-.resetButton {
-  width: 250px;
-  border-radius: 15px;
-}
-#particlesLogin {
+footer {
   position: absolute;
+  bottom: 0px;
+  height: 79px;
+  border-top: 1px solid #ddd;
   width: 100%;
-  height: 100vh;
-  background: url("../assets/imgs/load_bg.jpg") no-repeat;
-  background-size: 100% 100%;
+  background: #f7f7f7;
 }
-.container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-.card-box {
-  position: absolute;
-  background-color: ghostwhite;
-  top: 50%;
-  left: 70%;
-  transform: translate(-50%, -50%);
-  padding: 40px;
-  border-radius: 5px;
+.sub-foot {
+  width: 1000px;
   margin: 0 auto;
-  width: 300px;
-  opacity: 0.99;
+  text-align: center;
 }
-.loginInput {
-  color: black;
-  background-color: transparent;
+.sub-foot li {
+  display: inline-block;
   height: 30px;
-  width: 250px;
-  border-radius: 15px;
-  border: 1px solid #7d7e7f;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  text-indent: 50px;
-  outline: medium;
+  line-height: 30px;
+}
+.sub-foot p {
+  height: 30px;
+  line-height: 30px;
+}
+
+.login {
+  width: 100%;
+  height: 100%;
+  background-image: url("../assets/imgs/load_bg.jpg");
+  background-size: cover; /* 使图片平铺满整个浏览器（从宽和高的最大需求方面来满足，会使某些部分无法显示在区域中） */
+  position: absolute; /* 不可缺少 */
+  z-index: -1;
+  background-repeat: no-repeat;
+  /* overflow: hidden; */
+  /* overflow: auto; */
 }
 </style>

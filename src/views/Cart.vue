@@ -1,7 +1,11 @@
 <template>
-  <div class="main"></div>
+  <div class="mian">
+    
+  </div>
 </template>
 <script>
-//购物车界面
+
 </script>
-<style></style>
+<style lang="scss">
+
+</style>

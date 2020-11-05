@@ -1,5 +1,6 @@
 exports.install = function(Vue) {
-  Vue.prototype.$target = "http://localhost:8081/"; // 本地后端地址
+  //Vue.prototype.$target = " http://192.168.2.114:8080/"; // 线上后端地址
+  Vue.prototype.$target = "http://localhost:8080/"; // 本地后端地址
   // 封装提示成功的弹出框
   Vue.prototype.notifySucceed = function(msg) {
     this.$notify({

@@ -1,31 +1,34 @@
 <template>
-  <!-- 商城头部尾部框架前端代码 -->
   <div id="app" name="app">
+	  
     <el-container>
       <!-- 顶部导航栏 -->
-      <div class="topbar" style="">
+      <div class="topbar" style>
         <div class="nav">
           <ul>
-            <li v-if="!this.$store.getters.getUser">
-              <el-button type="text">关于我们</el-button>
-              <el-button type="text" @click="login">登录</el-button>
-            </li>
-            <li v-else>
-              欢迎
-              <el-popover placement="top" width="180" v-model="visible">
-                <p>确定退出登录吗？</p>
-                <div style="text-align: right; margin: 10px 0 0">
-                  <el-button size="mini" type="text" @click="visible = false"
-                    >取消</el-button
-                  >
-                  <el-button type="primary" size="mini" @click="logout"
-                    >确定</el-button
+            <li v-if="Object.keys(this.$store.getters.getUser).length > 0">
+              <el-popover
+                placement="top"
+                width="40"
+                v-model="visible"
+                trigger="hover"
+              >
+                <div style="text-align: center; margin: 0">
+                  <el-button type="primary" @click.native="logout"
+                    >注销</el-button
                   >
                 </div>
-                <el-button type="text" slot="reference">{{
-                  this.$store.getters.getUser.userName
-                }}</el-button>
+                <span slot="reference">
+                  {{ getUser.username }}
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
               </el-popover>
+            </li>
+            <li v-else>
+              <!--<el-button type="text">首页</el-button> -->
+              <el-button type="text" @click="login">登录</el-button>
+              <span class="sep">|</span>
+              <el-button type="text" @click="register">注册</el-button>
             </li>
             <li :class="getNum > 0 ? 'shopCart-full' : 'shopCart'">
               <router-link to="/cart">
@@ -49,12 +52,11 @@
         >
           <div class="logo">
             <router-link to="/">
-              <img src="./assets/imgs/logo.png" style="width:150px" alt />
+              <img src="./assets/imgs/logo.png" style="width:150px">
             </router-link>
           </div>
-          <el-menu-item index="/">首页</el-menu-item>
-          <el-menu-item index="/goods">全部商品</el-menu-item>
-          <el-menu-item index="/about">关于我们</el-menu-item>
+          <!--  <el-menu-item index="/">首页</el-menu-item>
+          <el-menu-item index="/about">关于我们</el-menu-item> -->
         </el-menu>
       </el-header>
       <!-- 顶栏容器END -->
@@ -62,7 +64,7 @@
       <!-- 主要区域容器 -->
       <el-main>
         <keep-alive>
-          <router-view></router-view>
+          <router-view> </router-view>
         </keep-alive>
       </el-main>
       <!-- 主要区域容器END -->
@@ -80,7 +82,10 @@
             </div>
           </div>
           <div class="github">
-            <a href="https://github.com/yidianbuhui/CCShop" target="_blank">
+            <a
+              href="https://github.com/yidianbuhui/CCShop"
+              target="_blank"
+            >
               <div class="github-but"></div>
             </a>
           </div>
@@ -90,7 +95,7 @@
               <span>|</span>
               <router-link to="/404">帮助中心</router-link>
             </p>
-            <p class="coty">cc电子商城版权所有 &copy; 2020-2021</p>
+            <p class="coty">CC商城版权所有 &copy; 2017-2020</p>
           </div>
         </div>
       </el-footer>
@@ -100,9 +105,9 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { mapGetters } from "vuex";
-
+import { mapActions, mapGetters } from "vuex";
+import { setShopCarInfo, getUserInfo } from "@/utils/common";
+import { getCar } from "@/api/car/car";
 export default {
   beforeUpdate() {
     this.activeIndex = this.$route.path;
@@ -110,48 +115,50 @@ export default {
   data() {
     return {
       activeIndex: "", // 头部导航栏选中的标签
-      visible: false // 是否退出登录
+      visible: false, // 是否退出登录
     };
   },
   created() {
     // 获取浏览器localStorage，判断用户是否已经登录
-    if (localStorage.getItem("user")) {
+    if (getUserInfo()) {
       // 如果已经登录，设置vuex登录状态
-      this.setUser(JSON.parse(localStorage.getItem("user")));
+      this.setUser(getUserInfo());
     }
   },
   computed: {
-    ...mapGetters(["getUser", "getNum"])
+    ...mapGetters(["getUser", "getNum", "getShoppingCart"]),
   },
   watch: {
     // 获取vuex的登录状态
     getUser: function(val) {
-      if (val === "") {
+      if (val == null) {
         // 用户没有登录
         this.setShoppingCart([]);
       } else {
         // 用户已经登录,获取该用户的购物车信息
-        this.$axios
-          .post("/api/user/shoppingCart/getShoppingCart", {
-            user_id: val.user_id
-          })
-          .then(res => {
-            if (res.data.code === "001") {
+        this.setShoppingCart(val.id);
+        getCar({
+          userid: val.id,
+        })
+          .then((res) => {
+            if (res.code == 200) {
               // 001 为成功, 更新vuex购物车状态
               this.setShoppingCart(res.data.shoppingCartData);
+              setShopCarInfo(res.data.shoppingCartData);
             } else {
               // 提示失败信息
               this.notifyError(res.data.msg);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             return Promise.reject(err);
           });
       }
-    }
+    },
   },
   methods: {
     ...mapActions(["setUser", "setShowLogin", "setShoppingCart"]),
+
     login() {
       this.$router.push("/login");
       // 点击登录按钮, 通过更改vuex的showLogin值显示登录组件
@@ -159,12 +166,13 @@ export default {
     },
     // 退出登录
     logout() {
-      this.visible = false;
-      // 清空本地登录信息
-      localStorage.setItem("user", "");
-      // 清空vuex登录信息
-      this.setUser("");
-      this.notifySucceed("成功退出登录");
+      if (Object.keys(this.$store.getters.getUser).length > 0) {
+        this.visible = false;
+        // 清空本地登录信息
+        localStorage.clear();
+        this.notifySucceed("成功退出登录");
+        location.reload();
+      }
     },
     // 接收注册子组件传过来的数据
     register() {
@@ -172,8 +180,8 @@ export default {
     },
     isRegister(val) {
       this.register = val;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -266,7 +274,7 @@ a:hover {
 }
 .el-header .logo {
   height: 60px;
-  width: 189px;
+  width: 800px;
   float: left;
 }
 .el-header .so {

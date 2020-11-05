@@ -8,58 +8,79 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: () => import("../views/Home.vue")
+    component: () => import("../portal/Home.vue"),
   },
   {
     path: "/error",
     name: "Error",
-    component: () => import("../components/Error.vue")
+    component: () => import("../components/Error.vue"),
   },
   {
     path: "/404",
     name: "404",
-    component: () => import("../components/404.vue")
+    component: () => import("../components/404.vue"),
   },
   {
     path: "/login",
     name: "Login",
-    component: () => import("../views/Login.vue")
+    component: () => import("../views/Login.vue"),
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import("../views/Register.vue"),
   },
   {
     path: "/goods",
     name: "Goods",
-    component: () => import("../views/Goods.vue")
+    component: () => import("../portal/Goods.vue"),
   },
   {
     path: "/about",
     name: "About",
-    component: () => import("../views/About.vue")
+    component: () => import("../portal/About.vue"),
   },
   {
     path: "/goodsDetails",
     name: "GoodsDetails",
-    component: () => import("../views/GoodsDetails.vue")
+    component: () => import("../portal/GoodsDetails.vue"),
   },
   {
     path: "/cart",
     name: "Cart",
-    component: () => import("../views/Cart.vue")
+    component: () => import("../views/Cart.vue"),
+  },
+  {
+    path: "/order",
+    name: "Order",
+    meta: {
+      title: "订单",
+      keepAlive: false,
+    },
+    component: () => import("../views/Order.vue"),
+  },
+  {
+    path: "/orderSave",
+    name: "OrderSave",
+    meta: {
+      title: "提交订单",
+      keepAlive: false,
+    },
+    component: () => import("../views/OrderSave.vue"),
   },
   {
     path: "/paySuccess",
     name: "PaySuccess",
     meta: {
-      title: "支付页面",
-      keepAlive: false
+      title: "订单",
+      keepAlive: false,
     },
-    components: {
-      blank: resolve => require(["@/views/paySuccess.vue"], resolve)
-    }
-  }
+    component: () => import("../views/paySuccess.vue"),
+  },
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
 export default router;

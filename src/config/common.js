@@ -7,5 +7,6 @@ export default {
   tokenKey: "ACCESS_TOKEN",
   userInfoKey: "USER_INFO",
   permissionsKey: "PERMISSION_ARRAY",
+  shopCarKey:"SHOPCAR_INFO",
   pageSizesArr: [14, 32, 64]
 };

@@ -6,6 +6,6 @@ export default {
   ...CommonConfig,
   ...SystemConfig,
   apiUrl: useApiUrl,
-  corporation: "cc电子有限公司",
-  siteName: "cc电子商城"
+  corporation: "电子有限公司",
+  siteName: "CC商城"
 };
